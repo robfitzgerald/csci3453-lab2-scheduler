@@ -1,0 +1,212 @@
+/*
+ Rob Fitzgerald
+*/
+
+/*
+ Implementation of member functions for darray class.
+ See darray.h for documentation.
+*/
+
+
+#include "darray.h"
+#include <cassert>
+#include <cstdlib>
+
+
+template <typename T>
+darray<T>::darray(const darray& d)
+{
+    arr = new T[d.cap];
+    cap = d.cap;
+    used = d.used;
+    for (int i = 0; i < used; ++i)
+    {
+        arr[i] = d.arr[i];
+    }
+}
+
+
+
+template <typename T>
+const T& darray<T>::operator [ ] (unsigned target) const
+{
+    try
+    {
+        if (target>=used || target<0)
+        {
+            throw badBracket(target);
+        }
+    }
+    catch(badBracket& b)
+    {
+        // error message output by badBracket constructor
+    }
+    
+    return arr[target];
+}
+
+
+template <typename T>
+T& darray<T>::operator [ ] (unsigned target)
+{
+    try
+    {
+        if (target>=used || target<0)
+        {
+            throw badBracket(target);
+        }
+        
+    }
+    catch(badBracket& b)
+    {
+        // error message output by badBracket constructor
+        // if (b.target > 0) { this.resize(b.target); } <--?
+    }
+    
+    return arr[target];
+}
+
+
+template <typename T>
+const T* darray<T>::find(const T& target) const
+{
+    for (int i = 0; i < used; ++i)
+    {
+        if (arr[i] == target)
+        {
+            return arr[i];
+        }
+    }
+    
+    return 0;
+}
+
+
+template <typename T>
+T* darray<T>::find(const T& target)
+{
+    for (int i = 0; i < used; ++i)
+    {
+        if (arr[i] == target)
+        {
+            return arr[i];
+        }
+    }
+    
+    return 0;
+}
+
+
+template <typename T>
+void darray<T>::pop_back()
+{
+    if (cap > 0)
+    {
+        T *newT = new T[cap-1];
+        for (int i = 0; i < cap-1; ++i)
+        {
+            newT[i] = arr[i];
+        }
+        
+        if(cap == used)
+        {
+            --used;
+        }
+        --cap;
+    }
+}
+
+
+template <typename T>
+void darray<T>::push_back(const T& addend)
+{
+    assert(used <= cap);
+
+    // resize array by 1 when needed
+    if (used + 1 == cap)
+    {
+        T *newT = new T[cap+1];    // hahaha NEWT!!
+        for (int i = 0; i < used; ++i)
+        {
+            newT[i] = arr[i];
+        }
+
+        newT[used] = addend;
+        ++cap;
+        ++used;
+        delete [] arr;
+        arr = newT;
+    }
+    
+    // do same operation without resize when not needed
+    else
+    {
+        arr[used] = addend;
+        ++used;
+    }
+}
+
+
+template <typename T>
+void darray<T>::resize (unsigned newSize)
+{
+    T *newT = new T[newSize];
+    
+    for (int i = 0; i < newSize; ++i)
+    {
+        if (i < newSize)
+        {
+            newT[i] = arr[i];
+        }
+    }
+    delete [] arr;
+    arr = newT;
+    if (used > newSize)
+    {
+        used = newSize;
+    }
+    cap = newSize;
+    
+}
+
+
+template <typename T>
+darray<T>& darray<T>::operator = (const darray<T>& rHS)
+{
+    
+    T* temp = new T[rHS.capacity()];
+    for (int i = 0; i < cap; ++i)
+    {
+        temp[i] = rHS[i];
+    }
+    delete [] arr;
+    arr = temp;
+    used = rHS.size();
+    cap = rHS.capacity();
+
+    
+    return temp;
+}
+
+
+template <typename T>
+void darray<T>::operator += (const darray<T>& rHS)
+{
+    unsigned newSize = rHS.size() + used,
+             pos = rHS.size();
+    T* newT = new T[newSize];
+    for (int i = 0; i < used; ++i)
+    {
+        newT[i] = arr[i];
+    }
+    for (int i = pos; i < newSize; ++i)
+    {
+        newT[i] = rHS[i];
+    }
+    delete [] arr;
+    arr = newT;
+    used = newSize;
+    cap = newSize;
+}
+
+

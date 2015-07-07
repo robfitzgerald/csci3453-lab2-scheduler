@@ -1,0 +1,58 @@
+#include "scheduler.h"
+
+template<typename T>
+void Scheduler<T>::advance() {
+    switch(algorithm) {
+        case 0:
+            // first come, first serve
+            fcfs();
+            break;
+        case 1:
+            // shortest remaining task first
+            srtf();
+            break;
+        case 2:
+            // round robin
+            rrobin();
+            break;
+        default: ;
+            // something here
+    }
+}
+
+template<typename T>
+void Scheduler<T>::fcfs() {
+    while (time < simulationDur) {
+        
+    }
+}
+
+template<typename T>
+void Scheduler<T>::srtf() {
+    
+}
+
+template<typename T>
+void Scheduler<T>::rrobin() {
+    
+}
+
+template<typename T>
+void Scheduler<T>::setAlgorithm(int a) {
+    this->algorithm = a;
+}
+
+template<typename T>
+void Scheduler<T>::setQuantum(int q) {
+    this->quantum = q;
+}
+
+template<typename T>
+void Scheduler<T>::setSimulationDur(int s) {
+    this->simulationDur = s;
+}
+
+template<typename T>
+int Scheduler<T>::run() {
+    
+}

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		153EE1661B49C40B00B741EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 153EE1651B49C40B00B741EC /* main.cpp */; };
+		153EE16E1B49C43700B741EC /* scheduler.tem in Sources */ = {isa = PBXBuildFile; fileRef = 153EE16C1B49C43700B741EC /* scheduler.tem */; };
+		153EE1731B49D06600B741EC /* pcb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 153EE1711B49D06600B741EC /* pcb.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,12 @@
 /* Begin PBXFileReference section */
 		153EE1621B49C40B00B741EC /* lab2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lab2; sourceTree = BUILT_PRODUCTS_DIR; };
 		153EE1651B49C40B00B741EC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		153EE16C1B49C43700B741EC /* scheduler.tem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scheduler.tem; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		153EE16D1B49C43700B741EC /* scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
+		153EE16F1B49C46900B741EC /* darray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = darray.h; sourceTree = "<group>"; };
+		153EE1701B49C46900B741EC /* darray.tem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = darray.tem; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		153EE1711B49D06600B741EC /* pcb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcb.cpp; sourceTree = "<group>"; };
+		153EE1721B49D06600B741EC /* pcb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcb.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,12 @@
 			isa = PBXGroup;
 			children = (
 				153EE1651B49C40B00B741EC /* main.cpp */,
+				153EE16C1B49C43700B741EC /* scheduler.tem */,
+				153EE1711B49D06600B741EC /* pcb.cpp */,
+				153EE1721B49D06600B741EC /* pcb.h */,
+				153EE16D1B49C43700B741EC /* scheduler.h */,
+				153EE16F1B49C46900B741EC /* darray.h */,
+				153EE1701B49C46900B741EC /* darray.tem */,
 			);
 			path = lab2;
 			sourceTree = "<group>";
@@ -118,7 +132,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				153EE1731B49D06600B741EC /* pcb.cpp in Sources */,
 				153EE1661B49C40B00B741EC /* main.cpp in Sources */,
+				153EE16E1B49C43700B741EC /* scheduler.tem in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
