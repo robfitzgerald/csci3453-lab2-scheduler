@@ -1,6 +1,6 @@
 /*
  
- pcb.h
+ PCB.h
  
  class Pcb
  
@@ -8,8 +8,6 @@
  
  constructor:
  Pcb(pid, arrival_time, cpu_burst_time)
- 
- 
  
  */
 
@@ -20,15 +18,17 @@
 #include <iomanip>
 #include <sstream>
 
-class Pcb {
+class PCB {
     
 public:
-    Pcb(int p, float a, float c): pid(p), arrival(a), CPUburst(c), response(0.0) {};
+    PCB(int p, float a, float c): pid(p), arrival(a), CPUburst(c), response(0.0) {};
     float getArrival();
     bool completed () { return timeCompleted == CPUburst; }
+    
     bool started() { return (response != 0.0); }
     void advance(float, float, bool);
     void done(float);
+    
     std::string results();
     
 private:
@@ -47,7 +47,7 @@ private:
 
 };
 
-void Pcb::advance(float increment, float time, bool waiting) {
+void PCB::advance(float increment, float time, bool waiting) {
     if (!this->started()) {
         this->response = time;
     }
@@ -58,13 +58,13 @@ void Pcb::advance(float increment, float time, bool waiting) {
     }
 }
 
-void Pcb::done(float time) {
+void PCB::done(float time) {
     this->finish = time;
     this->waiting = this->finish - this->arrival;
     this->turnaround = this->finish - this->arrival;
 }
 
-std::string Pcb::results() {
+std::string PCB::results() {
     
     std::ostringstream output;
     output

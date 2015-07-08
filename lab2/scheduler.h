@@ -3,11 +3,13 @@
 #define __lab2__scheduler__
 
 #include "darray.h"
+#include "PCB.h"
 
-template<typename T>
-class Scheduler: public darray<T>
+class Scheduler
 {
 private:
+    darray<PCB> unscheduled, ready, run, waiting, terminated;
+    
     int algorithm;
     int quantum;
     float time;
