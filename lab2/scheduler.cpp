@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include <iostream>
+#include <iomanip>
 
 void Scheduler::advance() {
     checkUnscheduled();
@@ -43,7 +44,7 @@ void Scheduler::srtf() {
     if (running[0].getRemaining() == 0) {
         runningToTerminated();
         if (ready.size() > 0) {
-            srtfSwapTuple shortest = srtfSwapTest(-1, SIMULATION_TIME_BOUND);
+            srtfSwapTuple shortest = srtfSwapTest(-1, SIMULATION_NUMERICAL_BOUND);
             ready.moveToFront(shortest.getIndex());
             readyToRun();
         }
@@ -67,19 +68,29 @@ void Scheduler::srtf() {
 
 
 void Scheduler::rrobin() {
-    if (running[0].getRemaining() == 0)
+    // move completed process to terminated queue
+    if (running.size() > 0 && running[0].getRemaining() == 0)
         runningToTerminated();
-    if (ready.size() > 0 && running.size() > 0)
-        contextSwitch();
-    else if (ready.size() > 0)
-        readyToRun();
+    // swap current process when quantum is complete
+    if (simulationTime!=0&&thisQuantum==0) {
+        // only context switching when a process is running and a process is ready
+        if (ready.size() > 0 && running.size() > 0)
+            contextSwitch();
+        // load a process that's ready when running is free
+        else if (ready.size() > 0)
+            readyToRun();
+    }
     
+    // make annotations
     if (running.size() > 0) {
         running[0].incrementRunning(SIMULATION_INCREMENT);
     }
     for (int i = 0; i < ready.size(); ++i) {
         ready[i].incrementWaiting(SIMULATION_INCREMENT);
     }
+    
+    // count through quantum
+    advanceThisQuantum();
 }
 
 
@@ -109,10 +120,11 @@ void Scheduler::runningToTerminated() {
 
 
 void Scheduler::readyToRun() {
+    // checks if annotating the response time is necessary
     if (ready.front().hasResponseOccured() == false) {
         ready.front().responseHasOccured();
-        float diff = simulationTime - ready.front().getArrival();
-        ready[0].setResponse(diff);
+        float diff = simulationTime - ready.front().getArrival() + contextTime;
+        ready.front().setResponse(diff);
     }
     running.push_back(ready.front());
     ready.pop_front();
@@ -138,6 +150,11 @@ void Scheduler::loadUnscheduledPCBs(darray<PCB>& simulation) {
 }
 
 
+void Scheduler::advanceThisQuantum() {
+    thisQuantum = (thisQuantum + 1) % quantum;
+}
+
+
 void Scheduler::setAlgorithm(int a) {
     algorithm = a;
 }
@@ -149,6 +166,8 @@ void Scheduler::setQuantum(int q) {
 
 
 void Scheduler::run() {
+    thisQuantum = 0;  // seems to not be getting set, perhaps
+    // a compiler version issue
     while (hasProcesses()) {
         advance();
         simulationTime++;
@@ -164,6 +183,12 @@ bool Scheduler::hasProcesses() {
 
 
 void Scheduler::contextSwitch() {
+    // checks if annotating the response time is necessary
+    if (ready.front().hasResponseOccured() == false) {
+        ready.front().responseHasOccured();
+        float diff = simulationTime - ready.front().getArrival() + contextTime;
+        ready.front().setResponse(diff);
+    }
     running[0].incrementContext();
     ready.push_back(running[0]);
     running.pop_back();
@@ -176,7 +201,37 @@ void Scheduler::contextSwitch() {
 }
 
 
+void Scheduler::sortAndAggregate() {
+    float sumBurst = 0, sumWait = 0, sumTurn = 0, sumResp = 0;
+    while (terminated.size() > 0) {
+        int lowPidIndex = SIMULATION_NUMERICAL_BOUND;
+        int lowPid = SIMULATION_NUMERICAL_BOUND;
+        for (int i = 0; i < terminated.size(); ++i) {
+            if (terminated[i].getPid() < lowPid) {
+                lowPidIndex = i;
+                lowPid = terminated[i].getPid();
+            }
+        }
+        terminated.moveToBack(lowPidIndex);
+        results.push_back(terminated.back());
+        terminated.pop_back();
+        
+        sumBurst += results.back().getCPUBurst();
+        sumWait += results.back().getWaiting();
+        sumTurn += results.back().getTurnaround();
+        sumResp += results.back().getResponse();
+        sumContext += results.back().getContext();
+    }
+    avgBurst = sumBurst / results.size();
+    avgWait = sumWait / results.size();
+    avgTurn = sumTurn / results.size();
+    avgResp = sumResp / results.size();
+    
+}
+
+
 void Scheduler::printResults() {
+    sortAndAggregate();
     std::string header;
     switch (algorithm) {
         case 0:
@@ -190,7 +245,12 @@ void Scheduler::printResults() {
             break;
     }
     std::cout << "*****************************************************************" << std::endl
-    << "           " << header << std::endl
+    << "           Scheduling Algorithm: " << header << std::endl;
+    if (algorithm==2) {
+        std::cout << "             No. of tasks: " << results.size()
+                  << ", Quantum: " << quantum << std::endl;
+    }
+    std::cout
     << "*****************************************************************\n" << std::endl;
     std::cout
     << std::setw(4) << "pid"
@@ -202,10 +262,16 @@ void Scheduler::printResults() {
     << std::setw(9) << "response"
     << std::setw(9) << "context" << std::endl;
     
-    for (int i = 0; i < terminated.size(); ++i) {
-        std::cout << terminated[i].results();
+    for (int i = 0; i < results.size(); ++i) {
+        std::cout << results[i].results();
         std::cout << std::endl;
     }
+    std::cout << "Average CPU burst time = " << avgBurst
+    << ", Average waiting time = " << avgWait << std::endl
+    << "Average turn around time = " << avgTurn
+    << ", Average response time = " << avgResp << std::endl
+    << "Total No. of Context Switches Performed = " << sumContext << std::endl;
+    
 }
 
 

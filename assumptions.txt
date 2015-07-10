@@ -1,0 +1,9 @@
+lab2
+list of assumptions
+time is incremented by one for each loop through the scheduler.run().advance() sequence
+‘finish’ is the time passed from the beginning of the simulation until a given process moves from the running queue to the terminated queue
+‘waiting’ is incremented by 0.5 during a context switch and 1.0 while a process waits in the ready queue while advance()-ing the scheduler
+all process wait 0.5 during a context switch
+‘turnaround’ is the difference between the finish time and the arrival time
+‘response’ is the difference between the arrival time and the first time the process moves onto the running queue
+in round robin, if a process completes during the middle of a quantum, a new process must wait until the end of the quantum before being moved onto the running queue

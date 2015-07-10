@@ -117,8 +117,10 @@ public:
     T back() const;
     
     // Modification members
+    T& back();
     void pop_back();
     void push_back(const T&);
+    T& front();
     void pop_front();
     void push_front(const T&);  // added 2015/07/08 for queue FIFO ops
     T* find(const T&);

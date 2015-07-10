@@ -96,6 +96,21 @@ T darray<T>::back() const {
 //    return (T*) 0;
 }
 
+template <typename T>
+T& darray<T>::front() {
+    //    if (used > 0)
+    return arr[0];
+    //    return (T*) 0;
+}
+
+
+template <typename T>
+T& darray<T>::back() {
+    //    if (used < 0)
+    return arr[used-1];
+    //    return (T*) 0;
+}
+
 
 template <typename T>
 T* darray<T>::find(const T& target)

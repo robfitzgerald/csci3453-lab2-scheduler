@@ -18,7 +18,6 @@
 
 darray<PCB> read_file(const char* fileName)
 {
-    std::cout << "fileName is " << fileName << std::endl;
     darray<PCB> result;
     std::vector<PCB> A;
     std::ifstream file;

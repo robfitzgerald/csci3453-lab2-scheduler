@@ -38,6 +38,7 @@ public:
         turnaround = copy.getTurnaround();
         response = copy.getResponse();
         context = copy.getContext();
+        responseOccured = copy.hasResponseOccured();
     }
     
     // getters for basic record data
