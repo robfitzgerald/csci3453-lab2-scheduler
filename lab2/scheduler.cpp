@@ -16,15 +16,12 @@ void Scheduler::advance() {
             // round robin
             rrobin();
             break;
-        default: ;
-            // something here
     }
-    
 }
 
 
 void Scheduler::fcfs() {
-    if (running[0].getRemaining() == running[0].getCPUBurst()) {
+    if (running[0].getRemaining() == 0) {
         runningToTerminated();
         if (ready.size() > 0)
             readyToRun();
@@ -41,13 +38,23 @@ void Scheduler::fcfs() {
 
 
 void Scheduler::srtf() {
-    if (running[0].getRemaining() == running[0].getCPUBurst())
-        runningToTerminated();
     
-    srtfSwapTuple shortest = srtfSwapTest();
-    if (shortest.getPid() != running[0].getPid()) {
-        ready.moveToFront(shortest.getIndex());
-        contextSwitch();
+    // determine shortest from ready queue if running process completed
+    if (running[0].getRemaining() == 0) {
+        runningToTerminated();
+        if (ready.size() > 0) {
+            srtfSwapTuple shortest = srtfSwapTest(-1, SIMULATION_TIME_BOUND);
+            ready.moveToFront(shortest.getIndex());
+            readyToRun();
+        }
+    } else
+    // determine shortest from both ready and run queues
+    {
+        srtfSwapTuple shortest = srtfSwapTest(running[0].getPid(), running[0].getRemaining());
+        if (shortest.getPid() != running[0].getPid()) {
+            ready.moveToFront(shortest.getIndex());
+            contextSwitch();
+        }
     }
     
     if (running.size() > 0) {
@@ -60,16 +67,25 @@ void Scheduler::srtf() {
 
 
 void Scheduler::rrobin() {
+    if (running[0].getRemaining() == 0)
+        runningToTerminated();
+    if (ready.size() > 0 && running.size() > 0)
+        contextSwitch();
+    else if (ready.size() > 0)
+        readyToRun();
     
+    if (running.size() > 0) {
+        running[0].incrementRunning(SIMULATION_INCREMENT);
+    }
+    for (int i = 0; i < ready.size(); ++i) {
+        ready[i].incrementWaiting(SIMULATION_INCREMENT);
+    }
 }
 
 
 void Scheduler::checkUnscheduled() {
     for (int i = 0; i < unscheduled.size(); ++i) {
         if (unscheduled[i].getArrival() == simulationTime) {
-            
-            // record response time
-            //unscheduled[i].setResponse(simulationTime);
             
             // move from unscheduled to ready queue
             unscheduled.moveToBack(i);
@@ -86,7 +102,7 @@ void Scheduler::checkUnscheduled() {
 
 
 void Scheduler::runningToTerminated() {
-    running[0].done(simulationTime);
+    running[0].done(simulationTime+contextTime);
     terminated.push_back(running[0]);
     running.pop_back();
 }
@@ -103,17 +119,15 @@ void Scheduler::readyToRun() {
 }
 
 
-Scheduler::srtfSwapTuple Scheduler::srtfSwapTest() {
-    int shortestRemainingPid = running[0].getPid();
-    int readyIndex;
-    float shortestRemainingTime = running[0].getRemaining();
+Scheduler::srtfSwapTuple Scheduler::srtfSwapTest(int shortestPid, float shortestRemaining) {
+    int readyIndex = -1;
     for (int i = 0; i < ready.size(); ++i) {
-        if (ready[i].getRemaining() < shortestRemainingTime) {
-            shortestRemainingPid = ready[i].getPid();
+        if (ready[i].getRemaining() < shortestRemaining) {
+            shortestPid = ready[i].getPid();
             readyIndex = i;
         }
     }
-    return srtfSwapTuple(shortestRemainingPid, readyIndex);
+    return srtfSwapTuple (shortestPid, readyIndex);
 }
 
 
@@ -156,12 +170,28 @@ void Scheduler::contextSwitch() {
     for (int i = 0; i < ready.size(); ++i) {
         ready[i].incrementWaiting(CONTEXT_SWITCH_TIME);
     }
+    contextTime += CONTEXT_SWITCH_TIME;
     running.push_front(ready.front());
     ready.pop_front();
 }
 
 
 void Scheduler::printResults() {
+    std::string header;
+    switch (algorithm) {
+        case 0:
+            header = "First Come, First Serve (FCFS)";
+            break;
+        case 1:
+            header = "Shortest Run Time First (SRTF)";
+            break;
+        case 2:
+            header = "Round Robin (RR)";
+            break;
+    }
+    std::cout << "*****************************************************************" << std::endl
+    << "           " << header << std::endl
+    << "*****************************************************************\n" << std::endl;
     std::cout
     << std::setw(4) << "pid"
     << std::setw(8) << "arrival"
@@ -171,6 +201,7 @@ void Scheduler::printResults() {
     << std::setw(11) << "turnaround"
     << std::setw(9) << "response"
     << std::setw(9) << "context" << std::endl;
+    
     for (int i = 0; i < terminated.size(); ++i) {
         std::cout << terminated[i].results();
         std::cout << std::endl;

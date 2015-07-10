@@ -6,7 +6,7 @@ void PCB::incrementWaiting(float inc) {
 }
 
 void PCB::incrementRunning(float inc) {
-    timeRemaining += inc;
+    timeRemaining -= inc;
 }
 
 void PCB::done(float time) {

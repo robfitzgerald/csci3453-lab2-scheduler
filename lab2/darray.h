@@ -124,7 +124,7 @@ public:
     T* find(const T&);
     void resize(unsigned);
     void moveToBack(int);
-    void moveToFront(int):
+    void moveToFront(int);
     
     // Operators
     const T& operator [ ] (unsigned) const;

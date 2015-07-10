@@ -21,7 +21,7 @@ public:
     PCB(){};
     PCB(int p, float a, float c): pid(p), arrival(a), CPUburst(c) {
         finish = 0.0;
-        timeRemaining = 0.0;
+        timeRemaining = CPUburst;
         waiting = 0.0;
         turnaround = 0.0;
         response = 0.0;
