@@ -81,6 +81,21 @@ const T* darray<T>::find(const T& target) const
     return 0;
 }
 
+template <typename T>
+T darray<T>::front() const {
+//    if (used > 0)
+        return arr[0];
+//    return (T*) 0;
+}
+
+
+template <typename T>
+T darray<T>::back() const {
+//    if (used < 0)
+        return arr[used-1];
+//    return (T*) 0;
+}
+
 
 template <typename T>
 T* darray<T>::find(const T& target)
@@ -100,19 +115,15 @@ T* darray<T>::find(const T& target)
 template <typename T>
 void darray<T>::pop_back()
 {
-    if (cap > 0)
+    if (used > 0)
     {
-        T *newT = new T[cap-1];
-        for (int i = 0; i < cap-1; ++i)
-        {
-            newT[i] = arr[i];
+        T* temp = new T[cap];
+        for (int i = 0; i < used-1; ++i) {
+            temp[i] = arr[i];
         }
-        
-        if(cap == used)
-        {
-            --used;
-        }
-        --cap;
+        delete [] arr;
+        arr = temp;
+        --used;
     }
 }
 
@@ -207,6 +218,87 @@ void darray<T>::operator += (const darray<T>& rHS)
     arr = newT;
     used = newSize;
     cap = newSize;
+}
+
+
+template <typename T>
+void darray<T>::pop_front() {
+    if (used > 0) {
+        T* temp = new T[cap];
+        for (int i = 1; i < used; ++i) {
+            temp[i-1] = arr[i];
+        }
+        delete [] arr;
+        arr = temp;
+        --used;
+    }
+}
+
+
+template <typename T>
+void darray<T>::push_front(const T& insert) {
+    
+    // resize if needed
+    if (used + 1 == cap)
+    {
+    // copy
+        T *newT = new T[cap+1];
+        for (int i = 0; i < used; ++i)
+        {
+            newT[i] = arr[i];
+        }
+        ++cap;
+        delete [] arr;
+        arr = newT;
+    }
+    
+    // shift
+    {
+        for (int i = used; i > 0; --i) {
+            arr[i] = arr[i-1];
+        }
+    }
+    
+    // push front
+    {
+        arr[0] = insert;
+        ++used;
+    }
+}
+
+template <typename T>
+void darray<T>::moveToBack(int index) {
+    if (used > 0) {
+        T* temp = new T[cap];
+        for (int i = 0; i < used; ++i) {
+            if (i != index && i <= index) {
+                temp[i] = arr[i];
+            } else if (i > index) {
+                temp[i-1] = arr[i];
+            }
+        }
+        temp[used-1] = arr[index];
+        delete [] arr;
+        arr = temp;
+    }
+}
+
+
+template <typename T>
+void darray<T>::moveToFront(int index) {
+    if (used > 0) {
+        T* temp = new T[cap];
+        for (int i = 0; i < used; ++i) {
+            if (i != index && i <= index) {
+                temp[i+1] = arr[i];
+            } else if (i > index) {
+                temp[i] = arr[i];
+            }
+        }
+        temp[0] = arr[index];
+        delete [] arr;
+        arr = temp;
+    }
 }
 
 

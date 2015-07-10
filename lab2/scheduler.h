@@ -8,26 +8,46 @@
 class Scheduler
 {
 private:
-    darray<PCB> unscheduled, ready, run, waiting, terminated;
+    const float CONTEXT_SWITCH_TIME = 0.5;
+    const float SIMULATION_INCREMENT = 1;
+    darray<PCB> unscheduled, ready, running, waiting, terminated;
+    
+    class srtfSwapTuple
+    {
+    public:
+        srtfSwapTuple(int p, int i): index(i), pid(p) {}
+        int getIndex() { return index; }
+        int getPid() { return pid; }
+    private:
+        int index;
+        int pid;
+    };
     
     int algorithm;
-    int quantum;
-    float time;
-    int simulationDur;
+    float quantum;
+    float simulationTime;
+    
     void advance();
     void fcfs();
     void srtf();
     void rrobin();
+    
+    void checkUnscheduled();
+    void runningToTerminated();
+    void readyToRun();
+    srtfSwapTuple srtfSwapTest();
 
 public:
-    
-    Scheduler() {};
+    void loadUnscheduledPCBs(darray<PCB>&);
+    Scheduler(int a, int q): algorithm(a), quantum(q) {
+        simulationTime = 0;
+    };
     void setAlgorithm(int);
     void setQuantum(int);
-    void setSimulationDur(float);
-    int run();
+    void run();
+    bool hasProcesses();
+    void contextSwitch();
+    void printResults();
 };
-
-#include "scheduler.tem"
 
 #endif /* defined(__lab2__scheduler__) */

@@ -113,12 +113,18 @@ public:
     unsigned size() const { return used; }
     unsigned capacity() const { return cap; }
     const T* find(const T&) const;
+    T front() const;
+    T back() const;
     
     // Modification members
     void pop_back();
     void push_back(const T&);
+    void pop_front();
+    void push_front(const T&);  // added 2015/07/08 for queue FIFO ops
     T* find(const T&);
     void resize(unsigned);
+    void moveToBack(int);
+    void moveToFront(int):
     
     // Operators
     const T& operator [ ] (unsigned) const;

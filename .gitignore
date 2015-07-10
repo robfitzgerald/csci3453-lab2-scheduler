@@ -1,0 +1,12 @@
+.DS_Store
+*.swp
+*~.nib
+
+build/
+
+*.pbxproj
+*.pbxuser
+*.perspective
+*.perspectivev3
+xcuserdata
+*.xcbkptlist

@@ -2,12 +2,9 @@
  
  PCB.h
  
- class Pcb
+ class PCB
  
- a record class to represent a single process and store data associated with the simulation of the process.
- 
- constructor:
- Pcb(pid, arrival_time, cpu_burst_time)
+ a record class to represent a single process control block.  this PCB stores data associated with the simulation of the process scheduler, and produces a report of that data.
  
  */
 
@@ -21,14 +18,50 @@
 class PCB {
     
 public:
-    PCB(int p, float a, float c): pid(p), arrival(a), CPUburst(c), response(0.0) {};
-    float getArrival();
-    bool completed () { return timeCompleted == CPUburst; }
+    PCB(){};
+    PCB(int p, float a, float c): pid(p), arrival(a), CPUburst(c) {
+        finish = 0.0;
+        timeRemaining = 0.0;
+        waiting = 0.0;
+        turnaround = 0.0;
+        response = 0.0;
+        context = 0;
+        responseOccured = false;
+    };
+    PCB(PCB& copy) {
+        pid = copy.getPid();
+        arrival = copy.getArrival();
+        CPUburst = copy.getCPUBurst();
+        finish = copy.getFinish();
+        timeRemaining = copy.getRemaining();
+        waiting = copy.getWaiting();
+        turnaround = copy.getTurnaround();
+        response = copy.getResponse();
+        context = copy.getContext();
+    }
     
-    bool started() { return (response != 0.0); }
-    void advance(float, float, bool);
+    // getters for basic record data
+    int getPid() { return pid; }
+    float getArrival() { return arrival; }
+    float getCPUBurst() { return CPUburst; }
+    float getFinish() { return finish; }
+    float getRemaining() { return timeRemaining; }
+    float getResponse() { return response; }
+    bool hasResponseOccured() { return responseOccured; }
+    float getWaiting() { return waiting; }
+    float getTurnaround() { return turnaround; }
+    int getContext() { return context; }
+    
+    // data recording functions
+    void setArrival(float a) { arrival = a; }
+    void setResponse(float r) { response = r; }
+    void responseHasOccured() { responseOccured = true; }
+    void incrementContext() { context++; };
+    void incrementWaiting(float);
+    void incrementRunning(float);
     void done(float);
     
+    // output
     std::string results();
     
 private:
@@ -39,43 +72,12 @@ private:
     
     // simluation data
     float finish;
-    float timeCompleted;
+    float timeRemaining;
     float waiting;
     float turnaround;
     float response;
+    bool responseOccured;
     int context;
-
 };
-
-void PCB::advance(float increment, float time, bool waiting) {
-    if (!this->started()) {
-        this->response = time;
-    }
-    if (waiting) {
-        this->waiting += increment;
-    } else {
-        this->timeCompleted += increment;
-    }
-}
-
-void PCB::done(float time) {
-    this->finish = time;
-    this->waiting = this->finish - this->arrival;
-    this->turnaround = this->finish - this->arrival;
-}
-
-std::string PCB::results() {
-    
-    std::ostringstream output;
-    output
-    << std::setw(4) << this->pid
-    << std::setw(8) << this->arrival
-    << std::setw(9) << this->CPUburst
-    << std::setw(7) << this->finish
-    << std::setw(8) << this->waiting
-    << std::setw(11) << this->turnaround
-    << std::setw(9) << this->context;
-    return output.str();
-}
 
 #endif /* defined(__lab2__pcb__) */
