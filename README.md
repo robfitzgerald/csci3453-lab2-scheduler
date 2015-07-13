@@ -43,34 +43,35 @@ You will implement the FCFS (First Come First Serve), SRTF (Shortest Remaining T
 
 Assumptions
 Use the following assumptions when you design and implement a CPU simulator.
-• There is only one CPU
-• All processes perform only CPU operations.
-• All processes have the same priority.
-• A newly arriving process is immediately stored at the ready queue.
-• We will use only the ready queue for this simulation.
-• Assume the context switching cost is 0.5 milliseconds
-• Context switch occurs only when the current process is moved to the ready queue.
-• Time units are milliseconds.
-• We use FCFS policy for breaking the tie. (For Round-Robin case)
+
+* There is only one CPU
+* All processes perform only CPU operations.
+* All processes have the same priority.
+* A newly arriving process is immediately stored at the ready queue.
+* We will use only the ready queue for this simulation.
+* Assume the context switching cost is 0.5 milliseconds
+* Context switch occurs only when the current process is moved to the ready queue.
+* Time units are milliseconds.
+* We use FCFS policy for breaking the tie. (For Round-Robin case)
 
 DO NOT USE any built-in queue library or class (do not use stl library in C++ or C). You have to implement your own queue management functions (or method).
 
 Measurements and Evaluation
 You should collect the following information of each process:
-• Time of completion
-• Waiting time
-• Turn around time
-• Response time
-• No. of Context switches occurred
+* Time of completion
+* Waiting time
+* Turn around time
+* Response time
+* No. of Context switches occurred
 
  
 
 You should calculate the following information using collected measurements:
-• Average CPU burst time
-• Average waiting time
-• Average turn around time
-• Average response time
-• Total number of Context Switching performed
+* Average CPU burst time
+* Average waiting time
+* Average turn around time
+* Average response time
+* Total number of Context Switching performed
 
 Please refer Chapter 5 in textbook for detail information about the measurements: waiting time, turn around time, response time, average waiting time, average turn around time, and average response time.
 
